@@ -8,6 +8,7 @@ var {todo}=require('./models/Todo');
 var {User}=require('./models/user');
 
 var app=express();
+const port=process.env.PORT||3000
 
 app.use(bodyParser.json());
 
@@ -52,8 +53,8 @@ todo.findById(id).then((Todo)=>{
 		});
 					
 
-app.listen(3000,()=>{
-	console.log('started on port 3000');
+app.listen(port,()=>{
+	console.log('started on port ');
 });
 
 
