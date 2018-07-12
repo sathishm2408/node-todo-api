@@ -3,7 +3,8 @@ var mongoose=require('mongoose');
 
 var todo =mongoose.model("todo",{
 	text:{
-		type:String
+		type:String,
+		required:true
 	},
 	completed:{
 		type:Boolean,
