@@ -41,8 +41,11 @@ if(!ObjectID.isValid(id)){
 	//res.send("the id is not present in db");
 	res.status(404).send();
 	}
-todo.findById(id).then((todos)=>{
-				res.send({todos});
+todo.findById(id).then((Todo)=>{
+	if(!todo){
+		return re.status(404).send();
+	}
+				res.send({Todo});
 			},(e)=>{
 			res.status(400).send(e);	
 			});
