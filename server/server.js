@@ -1,3 +1,5 @@
+const {ObjectID}=require('mongodb');
+
 const express=require('express');
 const bodyParser=require('body-parser');
 
@@ -31,7 +33,21 @@ todo.find({}).then((todos)=>{
 			res.status(400).send(e);	
 			});
 		});
-			
+
+
+app.get('/todos/:id',(req,res)=>{
+var id=req.params.id;
+if(!ObjectID.isValid(id)){
+	//res.send("the id is not present in db");
+	res.status(404).send();
+	}
+todo.findById(id).then((todos)=>{
+				res.send({todos});
+			},(e)=>{
+			res.status(400).send(e);	
+			});
+		});
+					
 
 app.listen(3000,()=>{
 	console.log('started on port 3000');
