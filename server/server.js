@@ -43,8 +43,8 @@ if(!ObjectID.isValid(id)){
 	res.status(404).send();
 	}
 todo.findById(id).then((Todo)=>{
-	if(!todo){
-		return re.status(404).send();
+	if(!Todo){
+		return res.status(404).send();
 	}
 				res.send({Todo});
 			},(e)=>{
@@ -53,6 +53,23 @@ todo.findById(id).then((Todo)=>{
 		});
 					
 
+app.delete('/todos/:id',(req,res)=>{
+var id=req.params.id;
+if(!ObjectID.isValid(id)){
+	//res.send("the id is not present in db");
+	res.status(404).send();
+	}
+todo.findByIdAndRemove(id).then((Todo)=>{
+	if(!Todo){
+		return res.status(404).send();
+	}
+				res.send({Todo});
+			}).catch((e)=>{
+			res.status(400).send();	
+			});
+		});
+		
+					
 app.listen(port,()=>{
 	console.log('started on port ');
 });
