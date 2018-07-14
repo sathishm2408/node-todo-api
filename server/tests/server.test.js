@@ -123,3 +123,46 @@ describe('GET/todos/:id',()=>{
 });
 
 
+describe('DELETE/todos/:id',()=>{
+	it('should delete todos for that id',(done)=>{
+		request(app)
+		//.get('/todos/'+todos[0]._id.toHexString())
+		.delete(url)
+		.expect(200)
+		.expect((res)=>{
+			expect(res.body.Todo._id).toBe(idString);
+		})
+		.end((err,res)=>{
+			if(err){
+				return done(err);
+			}
+			
+		todo.findById(idString).then((Todo)=>{
+			expect(Todo).toBe(null);
+			done();
+		}).catch((e)=>done(e));
+		});
+	});
+	
+it('should return 404 if todo not found',(done)=>{
+	request(app)
+		//.get('/todos/'+todos[0]._id.toHexString())
+		.delete("/todos/64844369d")
+		.expect(404)
+		//.expect((res)=>{
+			//expect(res.body.Todo.text).toBe(todos[0].text);
+		//})
+		.end(done);	
+	});
+	
+	it('shoulg return 404 for non-valid ids',(done)=>{
+	request(app)
+		//.get('/todos/'+todos[0]._id.toHexString())
+		.delete("/todos/6b474367c9d")
+		.expect(404)
+		//.expect((res)=>{
+			//expect(res.body.Todo.text).toBe(todos[0].text);
+		//})
+		.end(done);	
+	});
+});
