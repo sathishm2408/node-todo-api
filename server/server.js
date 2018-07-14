@@ -1,5 +1,5 @@
 const {ObjectID}=require('mongodb');
-
+const _=require('lodash');
 const express=require('express');
 const bodyParser=require('body-parser');
 
@@ -69,7 +69,34 @@ todo.findByIdAndRemove(id).then((Todo)=>{
 			});
 		});
 		
-					
+app.patch('/todos/:id',(req,res)=>{
+var id=req.params.id;
+
+var body=_.pick(req.body,['text','completed']);
+
+if(!ObjectID.isValid(id)){
+	//res.send("the id is not present in db");
+	return res.status(404).send();
+	}
+	
+if(_.isBoolean(body.completed)&&body.completed){
+	body.completedAt=new Date().getTime();
+}else{
+	body.completed=false;
+	body.completedAt=null;
+}
+	
+todo.findByIdAndUpdate(id,{$set:body},{new:true}).then((Todo)=>{
+	if(!Todo){
+		return res.status(404).send();
+	}
+				res.send({Todo});
+			}).catch((e)=>{
+			res.status(400).send();	
+			});
+		});
+
+		
 app.listen(port,()=>{
 	console.log('started on port ');
 });
