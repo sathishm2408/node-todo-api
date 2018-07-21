@@ -1,3 +1,6 @@
+
+require('./config/config');
+
 const {ObjectID}=require('mongodb');
 const _=require('lodash');
 const express=require('express');
@@ -96,7 +99,23 @@ todo.findByIdAndUpdate(id,{$set:body},{new:true}).then((Todo)=>{
 			});
 		});
 
-		
+	
+
+	
+app.post('/users',(req,res)=>{
+	var body=_.pick(req.body,['email','password']);
+	var user=new User(body);
+	
+	user.save().then(()=>{
+	return user.generateAuthToken();
+	}).then((token)=>{
+		res.header('x-auth',token).send(user);
+	//res.send(user);
+	}).catch((e)=>{
+		res.status(400).send(e);
+	});
+});
+	
 app.listen(port,()=>{
 	console.log('started on port ');
 });

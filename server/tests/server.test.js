@@ -166,3 +166,44 @@ it('should return 404 if todo not found',(done)=>{
 		.end(done);	
 	});
 });
+
+describe('PATCH/todos/:id',()=>{
+	it('should update the todo',(done)=>{
+		var text="this should be the new text";
+		
+		request(app)
+		.patch(url)
+		.send({
+			completed:true,
+			text
+		})
+		.expect(200)
+		.expect((res)=>{
+			expect(res.body.Todo.text).toBe(text);
+			expect(res.body.Todo.completed).toBe(true);
+			//expect(res.body.Todo.completedAt).toBeA("number");
+		})
+		.end(done);
+	});
+	
+	it('should clear completedAt when todo is not completed',(done)=>{
+		var hexId=todos[1]._id.toHexString();
+		var text="this should be the new text";
+		var url2="/todos/"+hexId;
+		
+		request(app)
+		.patch(url2)
+		.send({
+			completed:false,
+			text
+		})
+		.expect(200)
+		.expect((res)=>{
+			expect(res.body.Todo.text).toBe(text);
+			expect(res.body.Todo.completed).toBe(false);
+			expect(res.body.Todo.completedAt).toBe(null);
+		})
+		.end(done);
+	});
+});
+
