@@ -250,7 +250,7 @@ describe('POST/users',()=>{
 		//expect(res.headers['x-auth']).toExist();
 		//expect(res.body._id).toExist();
 		expect(res.headers['x-auth']).toBeTruthy();
-		expect(res.body._id).toBetruthy();
+		expect(res.body._id).toBeTruthy();
 		expect(res.body.email).toBe(email);
 		})
 		.end((err)=>{
@@ -339,5 +339,24 @@ describe('POST/users/login',()=>{
 			done();	
 			}).catch((e)=>done(e));
 		});
+	});
+});
+
+
+describe('DELETE/users/me/token',()=>{
+	it('should remove auth token on logout',(done)=>{
+	request(app)
+	.delete('/users/me/token')
+	.set('x-auth',users[0].tokens[0].token)
+	.expect(200)
+	.end((err,res)=>{
+		if(err){
+			return done(err);
+		}
+		User.findById(users[0]._id).then((user)=>{
+		expect(user.tokens.length).toBe(0);	
+		done();
+		}).catch((e)=>done(e));
+	});
 	});
 });
