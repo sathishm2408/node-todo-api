@@ -14,15 +14,17 @@ const users=[{
 	password:'abc123',
 	tokens:[{
 		access:'auth',
-		token:jwt.sign({_id:userOneId,access:'auth'},'abc123').toString()
-	}]
+		//token:jwt.sign({_id:userOneId,access:'auth'},'abc123').toString()
+		token:jwt.sign({_id:userTwoId,access:'auth'},process.env.JWT_SECRET).toString()
+		}]
 },{
 _id:userTwoId,
 	email:'sachu2@gmail.com',
 	password:'abc234',
 	tokens:[{
 		access:'auth',
-		token:jwt.sign({_id:userTwoId,access:'auth'},'abc123').toString()
+		//token:jwt.sign({_id:userTwoId,access:'auth'},'abc123').toString()
+		token:jwt.sign({_id:userTwoId,access:'auth'},process.env.JWT_SECRET).toString()
 }]
 }]
 
