@@ -16,10 +16,11 @@ const port=process.env.PORT||3000
 
 app.use(bodyParser.json());
 
-app.post('/todos',(req,res)=>{
+app.post('/todos',authenticate,(req,res)=>{
 //console.log(req.body);
 var newTodo=new todo({
-	text:req.body.text
+	text:req.body.text,
+	_creator:req.user._id
 });
 
 
@@ -30,9 +31,9 @@ newTodo.save().then((doc)=>{
 });
 });
 
-app.get('/todos',(req,res)=>{
+app.get('/todos',authenticate,(req,res)=>{
 
-todo.find({}).then((todos)=>{
+todo.find({_creator:req.user._id}).then((todos)=>{
 				res.send({todos});
 			},(e)=>{
 			res.status(400).send(e);	
@@ -46,7 +47,10 @@ if(!ObjectID.isValid(id)){
 	//res.send("the id is not present in db");
 	res.status(404).send();
 	}
-todo.findById(id).then((Todo)=>{
+todo.findOne({
+	_id:id,
+	_creator:req.user._id
+	}).then((Todo)=>{
 	if(!Todo){
 		return res.status(404).send();
 	}
@@ -63,7 +67,10 @@ if(!ObjectID.isValid(id)){
 	//res.send("the id is not present in db");
 	res.status(404).send();
 	}
-todo.findByIdAndRemove(id).then((Todo)=>{
+todo.findOneAndRemove({
+	_id:id,
+	_creator:req.user._id
+}).then((Todo)=>{
 	if(!Todo){
 		return res.status(404).send();
 	}
@@ -73,7 +80,7 @@ todo.findByIdAndRemove(id).then((Todo)=>{
 			});
 		});
 		
-app.patch('/todos/:id',(req,res)=>{
+app.patch('/todos/:id',authenticate,(req,res)=>{
 var id=req.params.id;
 
 var body=_.pick(req.body,['text','completed']);
@@ -90,7 +97,10 @@ if(_.isBoolean(body.completed)&&body.completed){
 	body.completedAt=null;
 }
 	
-todo.findByIdAndUpdate(id,{$set:body},{new:true}).then((Todo)=>{
+todo.findOneAndUpdate({
+	_id:id,
+	_creator:req.user._id
+	},{$set:body},{new:true}).then((Todo)=>{
 	if(!Todo){
 		return res.status(404).send();
 	}
