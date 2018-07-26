@@ -140,18 +140,19 @@ describe('DELETE/todos/:id',()=>{
 		request(app)
 		//.get('/todos/'+todos[0]._id.toHexString())
 		.delete(url2)
-		.expect(200)
 		.set('x-auth',users[1].tokens[0].token)
-		//.expect((res)=>{
-			//expect(res.body.Todo._id).toBe(idString);
-		//})
+		.expect(200)
+		
+		.expect((res)=>{
+		expect(res.body.Todo._id).toBe(idString);
+		})
 		.end((err,res)=>{
 			if(err){
 				return done(err);
 			}
 			
 		todo.findById(idString).then((Todo)=>{
-			expect(Todo).toBe(null);
+			expect(Todo).toBeFalsy();
 			done();
 		}).catch((e)=>done(e));
 		});
@@ -172,7 +173,7 @@ describe('DELETE/todos/:id',()=>{
 			}
 			
 		todo.findById(idString).then((Todo)=>{
-			expect(Todo).toExist();
+			expect(Todo).toBeTruthy();
 			done();
 		}).catch((e)=>done(e));
 		});
@@ -239,6 +240,7 @@ describe('PATCH/todos/:id',()=>{
 			expect(res.body.Todo.text).toBe(text);
 			expect(res.body.Todo.completed).toBe(true);
 			//expect(res.body.Todo.completedAt).toBeA("number");
+			expect(typeof res.body.Todo.completedAt).toBe("number");
 		})
 		.end(done);
 	});
@@ -313,8 +315,8 @@ describe('POST/users',()=>{
 				return done(err);
 			}
 		User.findOne({email}).then((user)=>{
-			expect(user).toExist();
-			expect(user.password).toNotBe(password);
+			expect(user).toBeTruthy();
+			expect(user.password).not.toBe(password);
 			done();
 		});
 		});
@@ -356,7 +358,7 @@ describe('POST/users/login',()=>{
 		})
 		.expect(200)
 		.expect((res)=>{
-			expect(res.header['x-auth']).toExist();
+			expect(res.header['x-auth']).toBeTruthy();
 		})
 		.end((err,res)=>{
 			if(err){
@@ -364,7 +366,7 @@ describe('POST/users/login',()=>{
 			}
 			
 			User.findById(users[1]._id).then((user)=>{
-				expect(user.tokens[1].toInclude({
+				expect(user.toObject().tokens[1].toMatchObject({
 					access:'auth',
 					token:res.headers['x-auth']
 				});
@@ -382,7 +384,7 @@ describe('POST/users/login',()=>{
 		})
 		.expect(400)
 		.expect((res)=>{
-			expect(res.header['x-auth']).toNotExist();
+			expect(res.header['x-auth']).toBeFalsy();
 		})
 		.end((err,res)=>{
 			if(err){
@@ -410,7 +412,7 @@ describe('DELETE/users/me/token',()=>{
 			}
 			
 			User.findById(users[0]._id).then((user)=>{
-				expect(user.tpkens.length).toBe(0);
+				expect(user.tokens.length).toBe(0);
 				done();
 			}).catch((e)=>done(e));
 		});

@@ -3,7 +3,7 @@ console.log("env ******"+env);
 
 if(env==='development'||env==='test'){
 	var config=require('./config.json');
-	var envConfig=Config[env];
+	var envConfig=config[env];
 	
 	//conole.log(Object.keys(envConfig));
 	
